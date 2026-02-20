@@ -1,33 +1,26 @@
 import graphene
+from graphene_django.filter import DjangoFilterConnectionField
+from graphql_jwt.decorators import login_required
 from .types import AuthorType, BookType
 from .models import Author, Book
+from .filters import BookFilter, AuthorFilter
 
 class Query(graphene.ObjectType):
     # List all
-    all_books = graphene.List(BookType)
-    all_authors = graphene.List(AuthorType)
+    all_books = DjangoFilterConnectionField(BookType, filterset_class=BookFilter)
+    all_authors = DjangoFilterConnectionField(AuthorType, filterset_class=AuthorFilter)
     
-    # Get by id
-    book = graphene.Field(BookType, id=graphene.Int(required=True))
-    author = graphene.Field(AuthorType, id=graphene.Int(required=True))
+    # Get by Relay id
+    book = graphene.relay.Node.Field(BookType)
+    author = graphene.relay.Node.Field(AuthorType)
 
-    def resolve_all_books(root, info):
+    @login_required
+    def resolve_all_books(root, info, **kwargs):
         return Book.objects.all()
 
-    def resolve_all_authors(root, info):
+    @login_required
+    def resolve_all_authors(root, info, **kwargs):
         return Author.objects.all()
-
-    def resolve_book(root, info, id):
-        try:
-            return Book.objects.select_related('author').get(id=id)
-        except Book.DoesNotExist:
-            return None
-
-    def resolve_author(root, info, id):
-        try:
-            return Author.objects.prefetch_related('books').get(id=id)
-        except Author.DoesNotExist:
-            return None
 
     
 
