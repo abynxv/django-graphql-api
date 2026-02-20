@@ -1,0 +1,198 @@
+{
+    "info": {
+        "_postman_id": "books-graphql-api",
+        "name": "Books GraphQL API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Create Author",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "mutation CreateAuthor {\n  createAuthor(name: \"J.K. Rowling\", email: \"jk@example.com\") {\n    author {\n      id\n      name\n      email\n    }\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Book",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "mutation CreateBook {\n  createBook(\n    title: \"Harry Potter and the Philosopher's Stone\",\n    authorId: 1,\n    isbn: \"9780747532743\",\n    publishedDate: \"1997-06-26\",\n    price: 19.99,\n    genre: \"Fantasy\"\n  ) {\n    book {\n      id\n      title\n      author {\n        name\n      }\n    }\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get All Books",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "query GetAllBooks {\n  allBooks {\n    id\n    title\n    isbn\n    price\n    author {\n      name\n      email\n    }\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get All Authors",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "query GetAllAuthors {\n  allAuthors {\n    id\n    name\n    email\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Book by ID",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "query GetBook {\n  book(id: 1) {\n    title\n    author {\n      name\n    }\n    price\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Author",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "mutation UpdateAuthor {\n  updateAuthor(id: 1, email: \"newemail@example.com\") {\n    author {\n      id\n      name\n      email\n    }\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Author",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "graphql",
+                    "graphql": {
+                        "query": "mutation DeleteAuthor {\n  deleteAuthor(id: 1) {\n    author {\n      id\n      name\n    }\n  }\n}",
+                        "variables": ""
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:8000/graphql/",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8000",
+                    "path": [
+                        "graphql",
+                        ""
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}
