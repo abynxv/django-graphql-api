@@ -1,113 +1,135 @@
 import graphene
+from graphql_jwt.decorators import superuser_required
+from graphql_relay import from_global_id
 from .types import AuthorType, BookType
 from .models import Author, Book
 
+class AuthorInput(graphene.InputObjectType):
+    name = graphene.String()
+    email = graphene.String()
+
+class BookInput(graphene.InputObjectType):
+    title = graphene.String()
+    author_id = graphene.ID()
+    isbn = graphene.String()
+    published_date = graphene.Date()
+    price = graphene.Decimal()
+    genre = graphene.String()
+
 class CreateAuthor(graphene.Mutation):
     class Arguments:
-        name = graphene.String(required=True)
-        email = graphene.String(required=True)
+        input = AuthorInput(required=True)
 
     author = graphene.Field(AuthorType)
 
-    def mutate(root, info, name, email):
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, input):
         author = Author.objects.create(
-            name=name,
-            email=email
+            name=input.get('name'),
+            email=input.get('email')
         )
         return CreateAuthor(author=author)
 
 class UpdateAuthor(graphene.Mutation):
     class Arguments:
-        id = graphene.Int(required=True)
-        name = graphene.String()
-        email = graphene.String()
+        id = graphene.ID(required=True)
+        input = AuthorInput(required=True)
 
     author = graphene.Field(AuthorType)
 
-    def mutate(root, info, id, name, email):
-        author = Author.objects.get(id=id)
-        if name:
-            author.name = name
-        if email:
-            author.email = email
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, id, input):
+        _, db_id = from_global_id(id)
+        author = Author.objects.get(id=db_id)
+        if input.get('name'):
+            author.name = input.get('name')
+        if input.get('email'):
+            author.email = input.get('email')
         author.save()
         return UpdateAuthor(author=author)
 
 class DeleteAuthor(graphene.Mutation):
     class Arguments:
-        id = graphene.Int(required=True)
+        id = graphene.ID(required=True)
 
     author = graphene.Field(AuthorType)
 
-    def mutate(root, info, id):
-        author = Author.objects.get(id=id)
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, id):
+        _, db_id = from_global_id(id)
+        author = Author.objects.get(id=db_id)
         author.delete()
         return DeleteAuthor(author=author)
- 
+
 class CreateBook(graphene.Mutation):
     class Arguments:
-        title = graphene.String(required=True)
-        author_id = graphene.Int(required=True)
-        isbn = graphene.String(required=True)
-        published_date = graphene.Date(required=True)
-        price = graphene.Decimal(required=True)
-        genre = graphene.String(required=True)
+        input = BookInput(required=True)
 
     book = graphene.Field(BookType)
 
-    def mutate(root, info, title, author_id, isbn, published_date, price, genre):
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, input):
         try:
-            author = Author.objects.get(id=author_id)
-        except Author.DoesNotExist:
-            raise Exception("Author not found")
+            _, author_db_id = from_global_id(input.get('author_id'))
+            author = Author.objects.get(id=author_db_id)
+        except Exception:
+            raise Exception("Author not found or invalid ID")
 
         book = Book.objects.create(
-            title=title,
+            title=input.get('title'),
             author=author,
-            isbn=isbn,
-            published_date=published_date,
-            price=price,
-            genre=genre
+            isbn=input.get('isbn'),
+            published_date=input.get('published_date'),
+            price=input.get('price'),
+            genre=input.get('genre')
         )
         return CreateBook(book=book)
 
 class UpdateBook(graphene.Mutation):
     class Arguments:
-        id = graphene.Int(required=True)
-        title = graphene.String()
-        author_id = graphene.Int()
-        isbn = graphene.String()
-        published_date = graphene.Date()
-        price = graphene.Decimal()
-        genre = graphene.String()
+        id = graphene.ID(required=True)
+        input = BookInput(required=True)
 
     book = graphene.Field(BookType)
 
-    def mutate(root, info, id, title, author_id, isbn, published_date, price, genre):
-        book = Book.objects.get(id=id)
-        if title:
-            book.title = title
-        if author_id:
-            book.author_id = author_id
-        if isbn:
-            book.isbn = isbn
-        if published_date:
-            book.published_date = published_date
-        if price:
-            book.price = price
-        if genre:
-            book.genre = genre
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, id, input):
+        _, db_id = from_global_id(id)
+        book = Book.objects.get(id=db_id)
+        
+        if input.get('title'):
+            book.title = input.get('title')
+        if input.get('author_id'):
+            _, author_db_id = from_global_id(input.get('author_id'))
+            book.author_id = author_db_id
+        if input.get('isbn'):
+            book.isbn = input.get('isbn')
+        if input.get('published_date'):
+            book.published_date = input.get('published_date')
+        if input.get('price'):
+            book.price = input.get('price')
+        if input.get('genre'):
+            book.genre = input.get('genre')
+            
         book.save()
         return UpdateBook(book=book)
 
 class DeleteBook(graphene.Mutation):
     class Arguments:
-        id = graphene.Int(required=True)
+        id = graphene.ID(required=True)
 
     book = graphene.Field(BookType)
 
-    def mutate(root, info, id):
-        book = Book.objects.get(id=id)
+    @classmethod
+    @superuser_required
+    def mutate(cls, root, info, id):
+        _, db_id = from_global_id(id)
+        book = Book.objects.get(id=db_id)
         book.delete()
         return DeleteBook(book=book)
 
