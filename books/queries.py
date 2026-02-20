@@ -12,10 +12,10 @@ class Query(graphene.ObjectType):
     author = graphene.Field(AuthorType, id=graphene.Int(required=True))
 
     def resolve_all_books(root, info):
-        return Book.objects.select_related('author').all()
+        return Book.objects.all()
 
     def resolve_all_authors(root, info):
-        return Author.objects.prefetch_related('books').all()
+        return Author.objects.all()
 
     def resolve_book(root, info, id):
         try:
