@@ -37,10 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'graphene_django',
     'django_filters',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'books',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -130,9 +131,20 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+from datetime import timedelta
+
 GRAPHENE = {
     'SCHEMA': 'config.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+}
+
+AUTH_USER_MODEL = 'books.CustomUser'
